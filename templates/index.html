@@ -1,0 +1,29 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<h2>Flask Journal</h2>
+        {% if entries.count() %}
+{% for entry in entries %}
+              {% for tag in tags %}
+        <table class="u-full-width">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Date</th>
+                <th>Tags</th>
+            </tr>
+          </thead>
+          <tbody>
+          <tr>
+          <th><a href="/entries/{{ entry.slug }}" title="{{ entry.title }}">{{ entry.title }}</a></th>
+              <th>{{ entry.entry_date }}</th>
+              <th>{{ tag.tag }} </th>
+          </tbody>
+        </table>
+        {% else %}
+        <!-- message for missing entries -->
+        <p>no entries yet</p>
+{% endfor %}
+{% endfor %}
+{% endif %}
+{% endblock %}

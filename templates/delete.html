@@ -1,0 +1,48 @@
+{% extends 'layout.html' %}
+
+{% from 'macros.html' import render_field %}
+
+{% block content %}
+<h2>{{ entry.title }} - Delete</h2>
+{% for word in tag %}
+<h3>Tags: {{ word.tag }}</h3>
+{% endfor %}
+<form method='POST' action=''>
+  {{ form.hidden_tag() }}
+  <div class="row">
+    <div class="six columns">
+      {{ render_field(form.title) }}
+    </div>
+  </div>
+  <div class="row">
+    <div class="six columns">
+      {{ render_field(form.entry_date) }}
+    </div>
+  </div>
+  <div class="row">
+    <div class="six columns">
+      {{ render_field(form.time_spent) }}
+    </div>
+  </div>
+  <div class="row">
+    <div class="six columns">
+      {{ render_field(form.what_you_learned) }}
+    </div>
+  </div>
+  <div class="row">
+      <div class="six columns">
+      {{ render_field(form.to_remember) }}
+    </div>
+  </div>
+  </div>
+  <div class="row">
+  <div class="u-full-width">
+    <button type="button" class="button-primary" onclick="parent.location='http://0.0.0.0:8000/entries'">Back</button>
+    {% if current_user.is_authenticated %}
+    <input type="submit" class="button-primary" value="Delete">
+    {% endif %}
+  </div>
+  </div>
+</form>
+
+{% endblock %}

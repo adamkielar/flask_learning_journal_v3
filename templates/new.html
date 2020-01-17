@@ -1,0 +1,49 @@
+{% extends 'layout.html' %}
+
+{% from 'macros.html' import render_field %}
+
+{% block content %}
+<h2>New Entry</h2>
+<form method='POST' action=''>
+  {{ form.hidden_tag() }}
+  <div class="row">
+    <div class="six columns">
+      {{ render_field(form.entry_form.title) }}
+    </div>
+  </div>
+  <div class="row">
+    <div class="six columns">
+      {{ render_field(form.entry_form.entry_date) }}
+    </div>
+  </div>
+  <div class="row">
+    <div class="six columns">
+      {{ render_field(form.entry_form.time_spent) }}
+    </div>
+  </div>
+  <div class="row">
+    <div class="five columns">
+      {{ render_field(form.entry_form.what_you_learned) }}
+    </div>
+  </div>
+  <div class="row">
+      <div class="six columns">
+      {{ render_field(form.entry_form.to_remember) }}
+    </div>
+  </div>
+  <div class="row">
+      <div class="two columns">
+      {{ render_field(form.tag_form.tag) }}
+    </div>
+  </div>
+  </div>
+  <div class="row">
+  <div class="u-full-width">
+    <input type="submit" class="button-primary" name="save-entry" value="Save Entry">
+    <input type="submit" class="button-primary" name="save-entry-tag" value="Save Entry and Tag">
+    <button type="button" class="button-primary" onclick="parent.location='http://0.0.0.0:8000'">Cancel</button>
+  </div>
+</div>
+</form>
+
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+{% for item in entry %}
+<h2>{{ item.title }} - Details</h2>
+        <table class="u-full-width">
+          <thead>
+            <tr>
+                <th>Title</th>
+                <th>Date</th>
+                <th>Time Spent (hours)</th>
+                <th>What You Learned</th>
+                <th>Resources to Remember</th>
+                <th>Tags</th>
+            </tr>
+          </thead>
+          <tbody>
+          <tr>
+              <th>{{ item.title }}</th>
+              <th>{{ item.entry_date }}</th>
+              <th>{{ item.time_spent }}</th>
+              <th>{{ item.what_you_learned }}</th>
+              <th>{{ item.to_remember }}</th>
+              <th>{% for word in tag %} {{ word.tag }} {% endfor %}</th>
+          </tr>
+          </tbody>
+        </table>
+<div class="grid-25">
+    <div class="u-full-width">
+        <button type="button" class="button-primary" onclick="parent.location='http://0.0.0.0:8000/entries'">Back</button>
+        {% if current_user.is_authenticated %}
+      <button type="button" class="button-primary" onclick="parent.location='http://0.0.0.0:8000/entries/{{ item.slug }}/edit'">Edit</button>
+        <button type="button" class="button-primary" onclick="parent.location='http://0.0.0.0:8000/entries/{{ item.slug }}/delete'">Delete</button>
+  </div>
+        {% endif %}
+    </div>
+{% endfor %}
+{% endblock %}
