@@ -2,9 +2,6 @@
 
 {% block content %}
 <h2>Flask Journal</h2>
-        {% if entries.count() %}
-{% for entry in entries %}
-              {% for tag in tags %}
         <table class="u-full-width">
           <thead>
             <tr>
@@ -14,16 +11,20 @@
             </tr>
           </thead>
           <tbody>
+          {% if entries.count() %}
+            {% for entry in entries %}
           <tr>
           <th><a href="/entries/{{ entry.slug }}" title="{{ entry.title }}">{{ entry.title }}</a></th>
               <th>{{ entry.entry_date }}</th>
-              <th>{{ tag.tag }} </th>
+              {% for tag in entry.tags %}
+              <th><a href="/tag/{{ tag.tag }}" title="{{ tag.tag }}">{{ tag.tag }}</a></th>
+          </tr>
+          {% endfor %}
           </tbody>
-        </table>
-        {% else %}
+            {% else %}
         <!-- message for missing entries -->
         <p>no entries yet</p>
-{% endfor %}
-{% endfor %}
-{% endif %}
+            {% endfor %}
+        {% endif %}
+        </table>
 {% endblock %}

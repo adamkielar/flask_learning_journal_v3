@@ -1,0 +1,34 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+{% for tag in tags %}
+<h2>Tag: {{ tag.tag }} </h2>
+        <table class="u-full-width">
+          <thead>
+            <tr>
+                <th>Title</th>
+                <th>Date</th>
+                <th>Time Spent (hours)</th>
+                <th>What You Learned</th>
+                <th>Resources to Remember</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for entry in entries %}
+          <tr>
+              <th>{{ entry.title }} </th>
+              <th>{{ entry.entry_date }} </th>
+              <th>{{ entry.time_spent }} </th>
+              <th>{{ entry.what_you_learned }} </th>
+              <th>{{ entry.to_remember }} </th>
+          </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+<div class="grid-25">
+    <div class="u-full-width">
+        <button type="button" class="button-primary" onclick="parent.location='http://0.0.0.0:8000/entries'">Back</button>
+  </div>
+    </div>
+{% endfor %}
+{% endblock %}

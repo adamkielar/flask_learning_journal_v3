@@ -1,8 +1,8 @@
 {% extends 'layout.html' %}
 
 {% block content %}
-{% for item in entry %}
-<h2>{{ item.title }} - Details</h2>
+{% for entry in entries %}
+<h2>{{ entry.title }} - Details</h2>
         <table class="u-full-width">
           <thead>
             <tr>
@@ -16,12 +16,12 @@
           </thead>
           <tbody>
           <tr>
-              <th>{{ item.title }}</th>
-              <th>{{ item.entry_date }}</th>
-              <th>{{ item.time_spent }}</th>
-              <th>{{ item.what_you_learned }}</th>
-              <th>{{ item.to_remember }}</th>
-              <th>{% for word in tag %} {{ word.tag }} {% endfor %}</th>
+              <th>{{ entry.title }}</th>
+              <th>{{ entry.entry_date }}</th>
+              <th>{{ entry.time_spent }}</th>
+              <th>{{ entry.what_you_learned }}</th>
+              <th>{{ entry.to_remember }}</th>
+              <th>{% for tag in tags %} {{ tag.tag }} {% endfor %}</th>
           </tr>
           </tbody>
         </table>
@@ -29,8 +29,8 @@
     <div class="u-full-width">
         <button type="button" class="button-primary" onclick="parent.location='http://0.0.0.0:8000/entries'">Back</button>
         {% if current_user.is_authenticated %}
-      <button type="button" class="button-primary" onclick="parent.location='http://0.0.0.0:8000/entries/{{ item.slug }}/edit'">Edit</button>
-        <button type="button" class="button-primary" onclick="parent.location='http://0.0.0.0:8000/entries/{{ item.slug }}/delete'">Delete</button>
+      <button type="button" class="button-primary" onclick="parent.location='http://0.0.0.0:8000/entries/{{ entry.slug }}/edit'">Edit</button>
+        <button type="button" class="button-primary" onclick="parent.location='http://0.0.0.0:8000/entries/{{ entry.slug }}/delete'">Delete</button>
   </div>
         {% endif %}
     </div>

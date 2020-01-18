@@ -15,6 +15,7 @@ HOST = '0.0.0.0'
 
 
 app = Flask(__name__)
+# csrf need to submit two forms on one page
 csrf = CSRFProtect(app)
 app.secret_key = 'jgeworguperougp394up93t8ygoi3u4qhcf384yt3pqfc4p3o9ut[w'
 
@@ -47,6 +48,7 @@ def _db_close(response):
 
 @app.route('/register', methods=('GET', 'POST'))
 def register():
+    """View for user to register"""
     form = forms.RegisterForm()
     if form.validate_on_submit():
         flash("You registered successfully", "success")
@@ -61,6 +63,7 @@ def register():
 
 @app.route('/login', methods=('GET', 'POST'))
 def login():
+    """View for user to log in"""
     form = forms.LoginForm()
     if form.validate_on_submit():
         try:
@@ -80,6 +83,7 @@ def login():
 @app.route('/logout')
 @login_required
 def logout():
+    """View for user to logout"""
     logout_user()
     flash("You've been logged out.", "success")
     return redirect(url_for('index'))
@@ -88,14 +92,16 @@ def logout():
 @app.route('/')
 @app.route('/entries')
 def index():
-    entries = models.Entry.select().join(models.Tag, on=(models.Entry.id==models.Tag.entry_tag))
-    tags = models.Tag.select().join(models.Entry, on=(models.Tag.entry_tag == models.Entry.id))
-    return render_template('index.html', entries=entries, tags=tags)
+    """View of journal homepage"""
+    entries = models.Entry.select()
+    entries_tags = models.Entry.select().join(models.Tag)
+    return render_template('index.html', entries=entries, entries_tags=entries_tags)
 
 
 @app.route('/entries/new', methods=('GET', 'POST'))
 @login_required
 def new_entry():
+    """View for user to add entry with or without tag"""
     form = forms.TagEntryForm()
     if "save-entry" in request.form and form.entry_form.validate(form):
         models.Entry.create_entry(
@@ -107,6 +113,7 @@ def new_entry():
             what_you_learned=form.entry_form.what_you_learned.data,
             to_remember=form.entry_form.to_remember.data
         )
+        models.database.close()
         flash('Entry saved !', 'success')
         return redirect(url_for('index'))
     elif "save-entry-tag" in request.form and form.validate():
@@ -119,7 +126,7 @@ def new_entry():
             what_you_learned=form.entry_form.what_you_learned.data,
             to_remember=form.entry_form.to_remember.data
         )
-        entry_id=models.Entry.select(models.Entry.id).order_by(models.Entry.id.desc()).limit(1).get()
+        entry_id = models.Entry.select(models.Entry.id).order_by(models.Entry.id.desc()).limit(1).get()
         models.Tag.create_tag(entry_tag=entry_id, tag=form.tag_form.data)
         flash('Entry and Tag saved !', 'success')
         return redirect(url_for('index'))
@@ -129,10 +136,9 @@ def new_entry():
 @app.route('/entries/<slug>/edit', methods=('GET', 'POST'))
 @login_required
 def edit_entry(slug):
+    """View for user to edit entry"""
     if slug:
         entry = models.Entry.select().where(models.Entry.slug == slug).get()
-        tag = models.Tag.select().join(models.Entry).where(models.Entry.id == models.Tag.entry_tag_id).order_by(
-            models.Tag.tag)
         form = forms.EntryForm(obj=entry)
 
     if form.validate_on_submit():
@@ -146,34 +152,46 @@ def edit_entry(slug):
         ).where(models.Entry.slug == slug).execute()
         flash('Entry updated !', 'success')
         return redirect(url_for('index'))
-    return render_template('edit.html', form=form, tag=tag, entry=entry)
+    return render_template('edit.html', form=form, entry=entry)
 
 
 @app.route('/entries/<slug>/delete', methods=('GET', 'POST'))
 @login_required
 def delete_entry(slug):
+    """View for user to delete entry"""
     if slug:
         entry = models.Entry.select().where(models.Entry.slug == slug).get()
-        tag = models.Tag.select().join(models.Entry).where(models.Entry.id == models.Tag.entry_tag_id).order_by(
-            models.Tag.tag)
         form = forms.EntryForm(obj=entry)
 
     if form.validate_on_submit():
-        models.Entry.delete_instance().where(models.Entry.slug == slug).execute()
+        models.Entry.delete().where(models.Entry.slug == slug).execute()
         flash('Entry deleted !', 'success')
         return redirect(url_for('index'))
-    return render_template('delete.html', form=form, tag=tag, entry=entry)
+    return render_template('delete.html', form=form)
 
 
 @app.route('/entries/<slug>')
 def details(slug):
-    entry = models.Entry.select().filter(slug=slug)
-    entry_id = models.Entry.select(models.Entry.id).where(models.Entry.slug==slug).get()
-    tag = models.Tag.select().join(models.Entry).where(models.Tag.entry_tag==entry_id).order_by(models.Tag.tag)
-    if not entry:
+    """Detail view fo entry"""
+    entries = models.Entry.select().filter(slug=slug)
+    entry_id = models.Entry.select(models.Entry.id).where(models.Entry.slug == slug).get()
+    tags = models.Tag.select().join(models.Entry).where(models.Tag.entry_tag == entry_id).order_by(models.Tag.tag)
+    if not entries:
         abort(404)
     else:
-        return render_template('detail.html', entry=entry, tag=tag)
+        return render_template('detail.html', entries=entries, tags=tags)
+
+
+@app.route('/tag/<tag>')
+def tag(tag):
+    """View of all entries with specific tag"""
+    tags = models.Tag.select().filter(tag=tag).limit(1)
+    entries = models.Entry.select().join(models.Tag, on=(models.Entry.id == models.Tag.entry_tag)).where(
+        models.Tag.tag == tag)
+    if not entries:
+        abort(404)
+    else:
+        return render_template('tag.html', tags=tags, entries=entries)
 
 
 @app.errorhandler(404)

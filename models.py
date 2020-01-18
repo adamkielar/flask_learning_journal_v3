@@ -16,6 +16,7 @@ class BaseModel(Model):
 
 
 class User(UserMixin, BaseModel):
+    """Model to create user"""
     username = CharField(unique=True)
     email = CharField(unique=True)
     password = CharField(max_length=100)
@@ -34,6 +35,7 @@ class User(UserMixin, BaseModel):
 
 
 class Entry(BaseModel):
+    """Model to create entry in journal"""
     user = ForeignKeyField(User, backref='entries')
     title = CharField()
     slug = CharField(unique=True)
@@ -60,6 +62,7 @@ class Entry(BaseModel):
 
 
 class Tag(BaseModel):
+    """Model to create tag for entry"""
     entry_tag = ForeignKeyField(Entry, backref='tags')
     tag = CharField()
 
@@ -73,8 +76,7 @@ class Tag(BaseModel):
                     tag=tag
                 )
         except IntegrityError:
-            raise  ValueError("Tag already exists")
-
+            raise ValueError("Tag already exists")
 
 
 def initialize():
